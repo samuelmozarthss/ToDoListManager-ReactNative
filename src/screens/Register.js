@@ -1,6 +1,5 @@
-import React, {Component} from 'react'
+import React, {Component} from 'react';
 import {
-  SafeAreaView,
   KeyboardAvoidingView,
   View,
   Image,
@@ -9,9 +8,15 @@ import {
   Button,
   StyleSheet,
   Alert,
-} from 'react-native'
-const img = require('../assets/TodoList.png')
+} from 'react-native';
+import {createUserOnFirebaseAsync} from '../services/FirebaseApi';
+
+const img = require('../assets/TodoList.png');
+
 export default class Register extends Component {
+  static navigationOptions = {
+    title: 'Register',
+  }
   state = {
     email: '',
     password: '',
@@ -21,7 +26,7 @@ export default class Register extends Component {
       <KeyboardAvoidingView style={styles.container} behavior='padding'>
         <View style={styles.topView}>
           <Image style={styles.img} source={img} />
-          <Text style={styles.title}>Registering new user</Text>
+          <Text style={styles.title}>Registrando novo Usuario</Text>
         </View>
         <View style={styles.bottomView}>
           <TextInput
@@ -35,23 +40,40 @@ export default class Register extends Component {
           />
           <TextInput
             style={styles.input}
-            placeholder='Password'
+            placeholder='Senha'
             secureTextEntry={true}
             onChangeText={password => this.setState({password})}
           />
-          <Button
-            title='Register User'
-            onPress={() => {
-              Alert.alert(
-                `Email: ${this.state.email}\n Password: ${this.state.password}`,
-              )
-            }}
-          />
+          <Button title='Registrar' onPress={() => this._createUserAsync()} />
         </View>
       </KeyboardAvoidingView>
-    )
+    );
   }
-}
+
+  async _createUserAsync () {
+    try {
+      const user = await createUserOnFirebaseAsync(
+        this.state.email,
+        this.state.password,
+      )
+      Alert.alert(
+        'Usuario Criado!',
+        `Usuario ${user.email} foi criado com sucesso!`,
+        [
+          {
+            text: 'Ok',
+            onPress: () => {
+              this.props.navigation.goBack()
+            },
+          },
+        ],
+      );
+    } catch (error) {
+      Alert.alert('Algo de errado aconteceu!', `Mensagem de erro: ${error.message}`)
+    };
+  }
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -82,4 +104,4 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 20,
   },
-})
+});
