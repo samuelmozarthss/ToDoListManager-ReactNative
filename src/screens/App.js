@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
 import {CommonActions} from '@react-navigation/native';
 import {currentFirebaseUser} from '../services/FirebaseApi';
+
 export default class App extends Component {
   async componentDidMount() {
     let resetNavigation = CommonActions.reset({
@@ -32,6 +33,7 @@ export default class App extends Component {
     );
   }
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
