@@ -1,9 +1,22 @@
 import React, {Component} from 'react';
-import {Image, StyleSheet, View} from 'react-native';
+import {Image, StyleSheet, View, TouchableOpacity, Text} from 'react-native';
+
+const imgPlus = require('../assets/plus.png');
 
 export default class ToDoTasks extends Component {
+  _goToTask() {
+    this.props.navigation.navigate('Task');
+  }
   render() {
-    return <View style={styles.container} />;
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.floatButton}
+          onPress={() => this._goToTask()}>
+          <Image source={imgPlus} style={styles.img} />
+        </TouchableOpacity>
+      </View>
+    );
   }
 }
 const styles = StyleSheet.create({
@@ -18,7 +31,8 @@ const styles = StyleSheet.create({
     height: 26,
   },
   img: {
-    width: 50,
-    height: 50,
+    margin: 10,
+    width: 25,
+    height: 25,
   },
 });

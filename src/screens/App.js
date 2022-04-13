@@ -1,50 +1,45 @@
-import React from 'react'
-import 'react-native-gesture-handler'
-import {SafeAreaView, View, StyleSheet} from 'react-native'
-const App = () => {
-  return (
-    <SafeAreaView testID='main' style={styles.container}>
-      <View testID='first' style={styles.first}>
-        <View style={styles.subView} />
-        <View style={styles.subView} />
-        <View style={styles.subView} />
+import React, {Component} from 'react';
+import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {CommonActions} from '@react-navigation/native';
+import {currentFirebaseUser} from '../services/FirebaseApi';
+export default class App extends Component {
+  async componentDidMount() {
+    let resetNavigation = CommonActions.reset({
+      index: 0,
+      routes: [{name: 'Login'}],
+    });
+    try {
+      const user = await currentFirebaseUser();
+      if (user) {
+        this.props.navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: 'TaskList'}],
+          }),
+        );
+        return;
+      }
+      this.props.navigation.dispatch(resetNavigation);
+    } catch (error) {
+      this.props.navigation.dispatch(resetNavigation);
+    }
+  }
+  render() {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator style={styles.loading} />
       </View>
-
-      <View testID='second' style={styles.second}>
-        <View style={styles.subView} />
-        <View style={styles.subView} />
-        <View style={styles.subView} />
-      </View>
-    </SafeAreaView>
-  )
+    );
+  }
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  first: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    margin: 40,
-    borderColor: 'red',
-    borderWidth: 1,
-  },
-  second: {
-    flex: 2,
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
-    alignItems: 'flex-end',
-    margin: 40,
-    borderColor: 'red',
-    borderWidth: 1,
-  },
-  subView: {
-    height: 50,
+  loading: {
     width: 50,
-    backgroundColor: 'skyblue',
+    height: 50,
   },
-})
-export default App
+});
